@@ -1,4 +1,4 @@
-# Entregable: Seguridad en MongoDB
+# Seguridad en MongoDB
 
 Este documento detalla la implementación de controles de seguridad en la instancia de MongoDB, abarcando el Control de Acceso Basado en Roles (RBAC), la simulación y mitigación de ataques de NoSQL Injection, y la aplicación de validadores de esquema mediante JSON Schema.
 
