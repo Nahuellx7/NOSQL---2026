@@ -1,9 +1,4 @@
-// ==========================================
-// ACTIVIDAD 3: Consultas avanzadas en MongoDB
-// Archivo: agregacion-mongodb.js
-// ==========================================
-
-use comercio;
+suse comercio;
 
 // ------------------------------------------
 // PASO 3: Insertar clientes
