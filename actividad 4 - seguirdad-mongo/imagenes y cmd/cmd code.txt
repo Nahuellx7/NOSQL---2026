@@ -1,0 +1,128 @@
+C:\Users\Nahuel>docker stop mongo-clase
+mongo-clase
+
+C:\Users\Nahuel>docker rm mongo-clase
+mongo-clase
+
+C:\Users\Nahuel>docker run --name mongo-clase -d -p 27017:27017 mongo:latest mongod --auth
+9b8f0484dd6e91a7e8ba2c5e079e9fe2f702f7f14b0b8b7932a3a4fa16a4a7df
+
+C:\Users\Nahuel>docker exec -it mongo-clase mongosh
+Current Mongosh Log ID: 6a902c16866f1953236164cc
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.9.2
+Using MongoDB:          8.2.12
+Using Mongosh:          2.9.2
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+
+To help improve our products, anonymous usage data is collected and sent to MongoDB periodically (https://www.mongodb.com/legal/privacy-policy).
+You can opt-out by running the disableTelemetry() command.
+
+test> use admin
+switched to db admin
+admin> db.createUser({
+|   user: "admin",
+|   pwd: "Admin-Muy-Secreto-2026",
+|   roles: [{ role: "root", db: "admin" }]
+| })
+{ ok: 1 }
+admin> exit
+
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug mongo-clase
+    Learn more at https://docs.docker.com/go/debug-cli/
+
+C:\Users\Nahuel>docker exec -it mongo-clase mongosh "mongodb://admin:Admin-Muy-Secreto-2026@localhost:27017/admin"
+Current Mongosh Log ID: 6a902c3c8daea932214cc09a
+Connecting to:          mongodb://<credentials>@localhost:27017/admin?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.9.2
+Using MongoDB:          8.2.12
+Using Mongosh:          2.9.2
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2026-08-27T12:22:41.150+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2026-08-27T12:22:41.446+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2026-08-27T12:22:41.446+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2026-08-27T12:22:41.446+00:00: We suggest setting the contents of sysfsFile to 0.
+   2026-08-27T12:22:41.446+00:00: We suggest setting swappiness to 0 or 1, as swapping can cause performance problems.
+------
+
+admin> use app_ventas
+switched to db app_ventas
+app_ventas> db.createUser({
+|   user: "app_ventas_user",
+|   pwd: "Password123",
+|   roles: [{ role: "readWrite", db: "app_ventas" }]
+| })
+{ ok: 1 }
+app_ventas> db.createUser({
+|   user: "lector",
+|   pwd: "Password123",
+|   roles: [{ role: "read", db: "app_ventas" }]
+| })
+{ ok: 1 }
+app_ventas> exit
+
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug mongo-clase
+    Learn more at https://docs.docker.com/go/debug-cli/
+
+C:\Users\Nahuel>docker exec -it mongo-clase mongosh "mongodb://lector:Password123@localhost:27017/app_ventas"
+Current Mongosh Log ID: 6a902c5e3e9dc1bf06910d7a
+Connecting to:          mongodb://<credentials>@localhost:27017/app_ventas?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.9.2
+Using MongoDB:          8.2.12
+Using Mongosh:          2.9.2
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+app_ventas> db.productos.insertOne({ nombre: "Prueba", precio: 10 })
+MongoServerError[Unauthorized]: not authorized on app_ventas to execute command { insert: "productos", documents: [ { nombre: "Prueba", precio: 10, _id: ObjectId('6a902c663e9dc1bf06910d7b') } ], ordered: true, lsid: { id: UUID("c831ae6d-1834-499a-b46d-952360c3236c") }, $db: "app_ventas" }
+app_ventas> exit
+
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug mongo-clase
+    Learn more at https://docs.docker.com/go/debug-cli/
+
+C:\Users\Nahuel>docker exec -it mongo-clase mongosh "mongodb://app_ventas_user:Password123@localhost:27017/app_ventas"
+Current Mongosh Log ID: 6a902c780654f3294ac72b13
+Connecting to:          mongodb://<credentials>@localhost:27017/app_ventas?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.9.2
+Using MongoDB:          8.2.12
+Using Mongosh:          2.9.2
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+app_ventas> db.usuarios.insertMany([
+|  { usuario: "ana", clave: "s3creto", admin: false },
+|  { usuario: "bruno", clave: "otra", admin: true }
+| ])
+|
+| db.usuarios.findOne({ usuario: { $ne: null }, clave: { $ne: null } })
+{
+  _id: ObjectId('6a902c820654f3294ac72b14'),
+  usuario: 'ana',
+  clave: 's3creto',
+  admin: false
+}
+app_ventas> db.runCommand({
+|  collMod: "usuarios",
+|  validator: {
+|   $jsonSchema: {
+|    bsonType: "object",
+|    required: ["usuario", "clave"],
+|    properties: {
+|     usuario: { bsonType: "string" },
+|     clave: { bsonType: "string" }
+|    }
+|   }
+|  }
+| })
+MongoServerError[Unauthorized]: not authorized on app_ventas to execute command { collMod: "usuarios", validator: { $jsonSchema: { bsonType: "object", required: [ "usuario", "clave" ], properties: { usuario: { bsonType: "string" }, clave: { bsonType: "string" } } } }, lsid: { id: UUID("908871ac-4831-4c82-8985-0edb534948b6") }, $db: "app_ventas" }
+app_ventas> db.usuarios.insertOne({ usuario: { $ne: null }, clave: "x" })
+{
+  acknowledged: true,
+  insertedId: ObjectId('6a902c950654f3294ac72b16')
+}
+app_ventas>
