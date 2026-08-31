@@ -1,12 +1,17 @@
-# Práctica de Redis - Clave/Valor y Estructuras de Datos
+# Práctica de Redis - Clave/Valor 
 
-A continuación se detallan los comandos ejecutados en la terminal junto con sus respectivas respuestas de Redis durante la práctica de contenedores y estructuras de datos NoSQL.
+A continuación se detallan los comandos ejecutados en la terminal junto con sus respectivas respuestas de Redis
 
 ## 1. Inicialización del Contenedor
+
+```bash
 docker run --name redis-clase -p 6379:6379 -d redis:7
 docker exec -it redis-clase redis-cli
+```
 
 ## 2. Operaciones con Strings y Contadores
+
+```text
 SET mensaje "hola nosql"
 # OK
 GET mensaje
@@ -22,8 +27,11 @@ INCRBY visitas 5
 # (integer) 7
 GET visitas
 # "7"
+```
 
 ## 3. Operaciones con Hashes
+
+```text
 HSET usuario:1 nombre "Ana" ciudad "Montevideo" edad 30
 # (integer) 3
 HGET usuario:1 nombre
@@ -37,8 +45,11 @@ HGETALL usuario:1
 6) "30"
 HINCRBY usuario:1 edad 1
 # (integer) 31
+```
 
 ## 4. Operaciones con Listas (Colas)
+
+```text
 LPUSH cola:tareas "procesar-venta-1"
 # (integer) 1
 LPUSH cola:tareas "procesar-venta-2"
@@ -52,8 +63,11 @@ LPUSH cola:tareas "procesar-venta-3"
 # (integer) 2
 LLEN cola:tareas
 # (integer) 2
+```
 
 ## 5. Operaciones con Sets (Conjuntos)
+
+```text
 SADD online "ana"
 # (integer) 1
 SADD online "bruno"
@@ -65,8 +79,11 @@ SMEMBERS online
 2) "bruno"
 SISMEMBER online "carla"
 # (integer) 0
+```
 
 ## 6. Operaciones con Sorted Sets (Conjuntos Ordenados)
+
+```text
 ZADD ranking 100 "ana"
 # (integer) 1
 ZADD ranking 250 "bruno"
@@ -84,8 +101,11 @@ ZREVRANGE ranking 0 2
 1) "bruno"
 2) "carla"
 3) "ana"
+```
 
 ## 7. Expiración y TTL
+
+```text
 SET sesion:100 "activo"
 # OK
 EXPIRE sesion:100 10
@@ -102,8 +122,11 @@ TTL promocion
 # (integer) 11
 TTL promocion
 # (integer) -2
+```
 
 ## 8. Patrón Cache-Aside
+
+```text
 GET cache:perfil:1
 # (nil)
 SET cache:perfil:1 "{\"nombre\":\"Ana\",\"ciudad\":\"Montevideo\"}" EX 30
@@ -112,8 +135,11 @@ GET cache:perfil:1
 # "{\"nombre\":\"Ana\",\"ciudad\":\"Montevideo\"}"
 TTL cache:perfil:1
 # (integer) 28
+```
 
 ## 9. Estado y Limpieza de la Base de Datos
+
+```text
 DBSIZE
 # (integer) 6
 KEYS *
@@ -125,3 +151,4 @@ KEYS *
 6) "cola:tareas"
 FLUSHALL
 # OK
+```
